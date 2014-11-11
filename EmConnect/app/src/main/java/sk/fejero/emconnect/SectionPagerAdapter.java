@@ -8,30 +8,46 @@ import sk.fejero.emconnect.fragments.InboxSectionFragment;
 import sk.fejero.emconnect.fragments.NewMessageSectionFragment;
 import sk.fejero.emconnect.fragments.SentSectionFragment;
 import sk.fejero.emconnect.fragments.SettingsSectionFragment;
+import sk.fejero.emconnect.management.ContainerManagement;
+import sk.fejero.emconnect.management.DataLoader;
+import sk.fejero.emconnect.models.NewMessageModel;
 
 /**
  * Created by fejero on 23.10.2014.
  */
 public class SectionPagerAdapter extends FragmentPagerAdapter {
 
-    public SectionPagerAdapter(FragmentManager fm) {
+    private DataLoader loader;
+    private ContainerManagement cm;
+    private NewMessageModel newMessageModel;
+
+    public SectionPagerAdapter(FragmentManager fm, DataLoader loader,ContainerManagement cm, NewMessageModel newMessageModel) {
         super(fm);
+        this.newMessageModel = newMessageModel;
+        this.loader = loader;
+        this.cm = cm;
     }
 
     @Override
     public Fragment getItem(int i) {
         switch (i) {
             case 0:
-                return new InboxSectionFragment();
+                InboxSectionFragment fragment = new InboxSectionFragment();
+                fragment.loadLoader(loader,cm);
+                return fragment;
 
             case 1:
-                return new SentSectionFragment();
+                SentSectionFragment sentFragment = new SentSectionFragment();
+                sentFragment.loadLoader(loader,cm);
+                return sentFragment;
             case 2:
-                return new NewMessageSectionFragment();
+                NewMessageSectionFragment newMessagefragment = new NewMessageSectionFragment();
+                newMessagefragment.loadModel(newMessageModel);
+                return newMessagefragment;
             case 3:
                 return new SettingsSectionFragment();
             default:
-                return new InboxSectionFragment();
+                return new NewMessageSectionFragment();
         }
     }
 

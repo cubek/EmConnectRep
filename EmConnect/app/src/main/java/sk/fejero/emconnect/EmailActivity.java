@@ -5,25 +5,34 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.view.Menu;
 
 
 import sk.fejero.emconnect.fragments.InboxSectionFragment;
 import sk.fejero.emconnect.fragments.NewMessageSectionFragment;
 import sk.fejero.emconnect.fragments.SentSectionFragment;
 import sk.fejero.emconnect.fragments.SettingsSectionFragment;
+import sk.fejero.emconnect.management.ContainerManagement;
+import sk.fejero.emconnect.management.DataLoader;
+import sk.fejero.emconnect.models.NewMessageModel;
 
 public class EmailActivity extends FragmentActivity implements ActionBar.TabListener {
 
 
-    SectionPagerAdapter mAppSectionsPagerAdapter;
-
-    ViewPager mViewPager;
+    private SectionPagerAdapter mAppSectionsPagerAdapter;
+    private ContainerManagement containerManagement;
+    private DataLoader loader;
+    private ViewPager mViewPager;
+    private NewMessageModel newMessageModel;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_email);
+        containerManagement = new ContainerManagement();
+        loader = new DataLoader();
+        newMessageModel = new NewMessageModel(containerManagement);
 
-        mAppSectionsPagerAdapter = new SectionPagerAdapter(getSupportFragmentManager());
+        mAppSectionsPagerAdapter = new SectionPagerAdapter(getSupportFragmentManager(),loader,containerManagement,newMessageModel);
         final ActionBar actionBar = getActionBar();
         actionBar.setHomeButtonEnabled(false);
 
@@ -35,18 +44,12 @@ public class EmailActivity extends FragmentActivity implements ActionBar.TabList
 
             @Override
             public void onPageSelected(int position) {
-                // When swiping between different app sections, select the corresponding tab.
-                // We can also use ActionBar.Tab#select() to do this if we have a reference to the
-                // Tab.
                 actionBar.setSelectedNavigationItem(position);
             }
         });
 
-        // For each of the sections in the app, add a tab to the action bar.
+
         for (int i = 0; i < mAppSectionsPagerAdapter.getCount(); i++) {
-            // Create a tab with text corresponding to the page title defined by the adapter.
-            // Also specify this Activity object, which implements the TabListener interface, as the
-            // listener for when this tab is selected.
             actionBar.addTab(
                     actionBar.newTab()
                             .setText(mAppSectionsPagerAdapter.getPageTitle(i))
@@ -66,5 +69,12 @@ public class EmailActivity extends FragmentActivity implements ActionBar.TabList
 
     @Override
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return super.onCreateOptionsMenu(menu);
+
+
     }
 }

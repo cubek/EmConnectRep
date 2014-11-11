@@ -1,5 +1,6 @@
 package sk.fejero.emconnect.fragments;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -9,58 +10,152 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import sk.fejero.emconnect.R;
+import sk.fejero.emconnect.management.ContainerManagement;
+import sk.fejero.emconnect.management.DataLoader;
+import sk.fejero.emconnect.messages.ConceptMessage;
+import sk.fejero.emconnect.messages.SentMessage;
 
 /**
  * Created by fejero on 23.10.2014.
  */
 public class SentSectionFragment extends Fragment {
 
-    View view;
+    private View linkView;
+    private View messageView;
+    private View contentView;
 
+    private int defaultTextColor;
+    private TextView currentLinkView;
+    private int currentLinkColor = Color.RED;
+    private DataLoader loader;
+    private ContainerManagement cm;
+
+
+    public SentSectionFragment() {
+
+    }
+
+    public void loadLoader(DataLoader loader, ContainerManagement cm){
+        this.loader = loader;
+        this.cm = cm;
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_sent, container, false);
 
-        LinearLayout parentLayout = (LinearLayout)rootView.findViewById(R.id.sent_list_layout);
-        LinearLayout leftBarLayout = (LinearLayout)rootView.findViewById(R.id.sent_link_list_layout);
+        LinearLayout contentParentLayout = (LinearLayout)rootView.findViewById(R.id.sent_list);
+        LinearLayout leftBarParentLayout = (LinearLayout)rootView.findViewById(R.id.sent_link_list_layout);
 
-        view = inflater.inflate(R.layout.left_bar_link_layout, parentLayout, false);
-        LinearLayout linkLayout = (LinearLayout)view.findViewById(R.id.link_content_layout);
-        TextView linkTextView = (TextView)view.findViewById(R.id.link_content);
-        linkTextView.setText("Sent");
-        leftBarLayout.addView(linkLayout);
+        initSideBar(inflater,leftBarParentLayout,contentParentLayout);
+        loader.loadSent(cm);
+        loader.loadConcepts(cm);
+        initSentContent(inflater, contentParentLayout);
 
-        view = inflater.inflate(R.layout.left_bar_link_layout, parentLayout, false);
-        linkLayout = (LinearLayout)view.findViewById(R.id.link_content_layout);
-        linkTextView = (TextView)view.findViewById(R.id.link_content);
-        linkTextView.setText("Concepts");
-        leftBarLayout.addView(linkLayout);
+        return rootView;
+    }
 
+    private void initSideBar(final LayoutInflater inflater, LinearLayout leftBarParentLayout, final LinearLayout contentParentLayout){
+        linkView = inflater.inflate(R.layout.left_bar_link_layout, leftBarParentLayout, false);
+        LinearLayout linkLayout = (LinearLayout)linkView.findViewById(R.id.link_content_layout);
+        final TextView sentLinkTextView = (TextView)linkView.findViewById(R.id.link_content);
+        sentLinkTextView.setText("Sent");
 
+        final int currentTextColor = sentLinkTextView.getCurrentTextColor();
+        currentLinkView = sentLinkTextView;
 
-        for (int i = 1; i < 4; i++){
-            // Add the text layout to the parent layout
-            view = inflater.inflate(R.layout.single_sent_layout, parentLayout, false);
-
-            LinearLayout textViewLayout = (LinearLayout)view.findViewById(R.id.sent_text_layout);
-            TextView senderTextView = (TextView)view.findViewById(R.id.sent_sender);
-            senderTextView.setText("fejero@fejero.com");
-
-            TextView topicTextView = (TextView)view.findViewById(R.id.sent_topic);
-            topicTextView.setText("Job application");
+        defaultTextColor = currentTextColor;
+        currentLinkView = sentLinkTextView;
+        sentLinkTextView.setTextColor(currentLinkColor);
 
 
-            TextView contentTextView = (TextView)view.findViewById(R.id.sent_content);
-            contentTextView.setText("Ponuka, ktorá sa neodmieta? No predsa stovky Blu-ray filmov s brutálnym zľavami! :-) Alebo máte chuť radšej na filmové novinky? Nie je problém! Samozrejme, zabudnúť nemôžeme ani na milovníkov hudby. A keď už kvalitné zážitky, tak so šálkou chutného čaju alebo v romantickom prítmí luxusných sviečok Alusi. :-) Nestačí? Nevadí, ešte oveľa viac toho nájdete len o kúsok nižšie. Prajeme krásny víkend, milí priatelia! :-)");
+        sentLinkTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                currentLinkView.setTextColor(defaultTextColor);
+                sentLinkTextView.setTextColor(currentLinkColor);
+                currentLinkView = sentLinkTextView;
+                contentParentLayout.removeViewAt(0);
+                initSentContent(inflater,contentParentLayout);
+            }
+        });
+        leftBarParentLayout.addView(linkLayout);
 
-            TextView dateTextView = (TextView)view.findViewById(R.id.sent_date);
-            dateTextView.setText("30.10.2014");
+        linkView = inflater.inflate(R.layout.left_bar_link_layout, leftBarParentLayout, false);
+        linkLayout = (LinearLayout)linkView.findViewById(R.id.link_content_layout);
+        final TextView conceptsLinkTextView = (TextView)linkView.findViewById(R.id.link_content);
+        conceptsLinkTextView.setText("Concepts");
+        conceptsLinkTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                currentLinkView.setTextColor(defaultTextColor);
+                conceptsLinkTextView.setTextColor(currentLinkColor);
+                currentLinkView = conceptsLinkTextView;
+                contentParentLayout.removeViewAt(0);
+                initConceptsContent(inflater,contentParentLayout);
+            }
+        });
+        leftBarParentLayout.addView(linkLayout);
+    }
 
+    private void initSentContent(LayoutInflater inflater,LinearLayout contentParentLayout){
+        contentView = inflater.inflate(R.layout.sent_list_layout, contentParentLayout, false);
+
+        LinearLayout contentScrollView = (LinearLayout)contentView.findViewById(R.id.sentScrollLayout);
+        LinearLayout contentScrollLayout = (LinearLayout)contentView.findViewById(R.id.sent_list_layout);
+        contentParentLayout.addView(contentScrollView);
+
+
+
+        for (SentMessage m : cm.getSentMessageList()){
+            messageView = inflater.inflate(R.layout.single_inbox_layout, contentScrollLayout, false);
+            LinearLayout textViewLayout = (LinearLayout)messageView.findViewById(R.id.inbox_text_layout);
+
+            TextView senderTextView = (TextView)messageView.findViewById(R.id.inbox_sender);
+            senderTextView.setText(m.getAddress());
+
+            TextView topicTextView = (TextView)messageView.findViewById(R.id.inbox_topic);
+            topicTextView.setText(m.getSubject());
+
+            TextView contentTextView = (TextView)messageView.findViewById(R.id.inbox_content);
+            contentTextView.setText(m.getContent());
+
+            TextView dateTextView = (TextView)messageView.findViewById(R.id.inbox_date);
+            dateTextView.setText(m.getDate().toString());
 
             // Add the text view to the parent layout
-            parentLayout.addView(textViewLayout);
+            contentScrollLayout.addView(textViewLayout);
         }
-        return rootView;
+    }
+
+
+    private void initConceptsContent(LayoutInflater inflater,LinearLayout contentParentLayout){
+        contentView = inflater.inflate(R.layout.sent_list_layout, contentParentLayout, false);
+
+        LinearLayout contentScrollView = (LinearLayout)contentView.findViewById(R.id.sentScrollLayout);
+        LinearLayout contentScrollLayout = (LinearLayout)contentView.findViewById(R.id.sent_list_layout);
+        contentParentLayout.addView(contentScrollView);
+
+
+
+        for (ConceptMessage m : cm.getConceptMessageList()){
+            messageView = inflater.inflate(R.layout.single_inbox_layout, contentScrollLayout, false);
+            LinearLayout textViewLayout = (LinearLayout)messageView.findViewById(R.id.inbox_text_layout);
+
+            TextView senderTextView = (TextView)messageView.findViewById(R.id.inbox_sender);
+            senderTextView.setText(m.getAddress());
+
+            TextView topicTextView = (TextView)messageView.findViewById(R.id.inbox_topic);
+            topicTextView.setText(m.getSubject());
+
+            TextView contentTextView = (TextView)messageView.findViewById(R.id.inbox_content);
+            contentTextView.setText(m.getContent());
+
+            TextView dateTextView = (TextView)messageView.findViewById(R.id.inbox_date);
+            dateTextView.setText(m.getDate().toString());
+
+            // Add the text view to the parent layout
+            contentScrollLayout.addView(textViewLayout);
+        }
     }
 }
