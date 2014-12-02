@@ -6,7 +6,7 @@
     android:layout_height="101dp"
     android:orientation="vertical"
     android:layout_marginTop="2dp"
-    android:id="@+id/filter_settings_layout">
+    android:id="@+id/look_settings_layout">
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="100dp"
@@ -16,7 +16,7 @@
         android:textSize="15dp"
         android:textColor="@android:color/holo_blue_dark"
         android:id="@+id/setting_link"
-        android:text="Filters settings"
+        android:text="Look settings"
         android:clickable="true"/>
 
     <View xmlns:android="http://schemas.android.com/apk/res/android"
