@@ -2,22 +2,24 @@ package sk.fejero.emconnect.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
 import java.util.Date;
 
+import javax.mail.MessagingException;
+
+import sk.fejero.emconnect.EmailActivity;
 import sk.fejero.emconnect.R;
+import sk.fejero.emconnect.mailclient.EmailMessage;
+import sk.fejero.emconnect.mailclient.outcomming.SmtpClient;
 import sk.fejero.emconnect.management.ContainerManagement;
 import sk.fejero.emconnect.management.DataLoader;
-import sk.fejero.emconnect.messages.ConceptMessage;
 import sk.fejero.emconnect.messages.Message;
-import sk.fejero.emconnect.messages.SentMessage;
 import sk.fejero.emconnect.models.NewMessageModel;
 
 /**
@@ -32,6 +34,9 @@ public class NewMessageSectionFragment extends Fragment {
     private ImageButton emailSendButton;
     private ImageButton emailSaveButton;
     private ImageButton attachementButton;
+    private DataLoader loader;
+    private ContainerManagement cm;
+    private SmtpClient smtpClient;
 
     private NewMessageModel model;
 
@@ -40,9 +45,11 @@ public class NewMessageSectionFragment extends Fragment {
 
     }
 
-    public void loadModel(NewMessageModel model){
+    public void loadModel(NewMessageModel model, DataLoader loader, ContainerManagement cm, SmtpClient smtpClient){
         this.model = model;
-
+        this.loader = loader;
+        this.cm = cm;
+        this.smtpClient = smtpClient;
     }
 
 
@@ -50,7 +57,7 @@ public class NewMessageSectionFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_new_message, container, false);
-
+        Log.i("New Message", "New message section started");
         addressEditText = (EditText)rootView.findViewById(R.id.address_edit_text);
         ccEditText = (EditText)rootView.findViewById(R.id.cc_edit_text);
         subjectEditText = (EditText)rootView.findViewById(R.id.subject_edit_text);
@@ -59,12 +66,47 @@ public class NewMessageSectionFragment extends Fragment {
         emailSaveButton = (ImageButton)rootView.findViewById(R.id.email_save_button);
         attachementButton = (ImageButton)rootView.findViewById(R.id.attachements_button);
 
+            if(cm.getTempMessage()!=null) {
+                Log.i("Message", "Vykonava sa zapis");
+                //EditText x = (EditText)rootView.findViewById(R.id.address_edit_text);
+                String add = cm.getTempMessage().getAddress();
+                Log.i("Message address", add);
+
+                addressEditText.setHint(add);
+
+                String sub = cm.getTempMessage().getSubject();
+                subjectEditText.setHint(sub);
+
+                String con = cm.getTempMessage().getContent();
+                contentEditText.setHint(con);
+                cm.setTempMessage(null);
+            }
+            else{
+                addressEditText.setHint("");
+
+
+                subjectEditText.setHint("");
+
+
+                contentEditText.setHint("");
+            }
+
 
         emailSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SentMessage sentMessage = new SentMessage(new Date(),addressEditText.getText().toString(),subjectEditText.getText().toString(),ccEditText.getText().toString(),contentEditText.getText().toString());
-                model.sendEmail(sentMessage);
+                Message sentMessage = new Message(new Date(),addressEditText.getText().toString(),subjectEditText.getText().toString(),ccEditText.getText().toString(),contentEditText.getText().toString());
+                //model.sendEmail(sentMessage, smtpClient);
+                EmailMessage message = new EmailMessage();
+                message.setTo(addressEditText.getText().toString());
+                message.setSubject(subjectEditText.getText().toString());
+                message.setCc(ccEditText.getText().toString());
+                message.setContent(contentEditText.getText().toString());
+                try {
+                    smtpClient.sendMessage(message);
+                } catch (MessagingException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -78,7 +120,7 @@ public class NewMessageSectionFragment extends Fragment {
         emailSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ConceptMessage conceptMessage = new ConceptMessage(new Date(),addressEditText.getText().toString(),subjectEditText.getText().toString(),ccEditText.getText().toString(),contentEditText.getText().toString());
+                Message conceptMessage = new Message(new Date(),addressEditText.getText().toString(),subjectEditText.getText().toString(),ccEditText.getText().toString(),contentEditText.getText().toString());
                 model.saveEmailToConcepts(conceptMessage);
             }
         });

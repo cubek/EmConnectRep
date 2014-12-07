@@ -1,30 +1,49 @@
 package sk.fejero.emconnect.management;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import sk.fejero.emconnect.messages.ConceptMessage;
-import sk.fejero.emconnect.messages.InboxMessage;
-import sk.fejero.emconnect.messages.SentMessage;
-import sk.fejero.emconnect.messages.SpamMessage;
-import sk.fejero.emconnect.messages.TrashMessage;
+import sk.fejero.emconnect.account.Account;
+
+import sk.fejero.emconnect.messages.Message;
+
 
 /**
  * Created by fejero on 5.11.2014.
  */
 public class ContainerManagement {
 
-    private List<InboxMessage> inboxMessageList = new ArrayList<InboxMessage>();
-    private List<SentMessage> sentMessageList = new ArrayList<SentMessage>();
-    private List<TrashMessage> trashMessageList = new ArrayList<TrashMessage>();
-    private List<SpamMessage> spamMessageList = new ArrayList<SpamMessage>();
-    private List<ConceptMessage> conceptMessageList = new ArrayList<ConceptMessage>();
+    private List<Message> inboxMessageList = new ArrayList<Message>();
+    private List<Message> sentMessageList = new ArrayList<Message>();
+    private List<Message> trashMessageList = new ArrayList<Message>();
+    private List<Message> spamMessageList = new ArrayList<Message>();
+    private List<Message> conceptMessageList = new ArrayList<Message>();
+    private List<Account> accountList = new ArrayList<Account>();
+    private Account currentAccount;
+    private Message tempMessage=null;
 
 
-    public void addTrashMessage(TrashMessage trashMessage){
+
+    public void setTempMessage(Message message){
+
+        this.tempMessage = message;
+        //Log.i("Set temp", tempMessage.getAddress());
+    }
+
+    public Message getTempMessage(){
+        //Log.i("Get temp", tempMessage.getAddress());
+        return tempMessage;
+    }
+
+
+
+
+
+    public void addTrashMessage(Message trashMessage){
         trashMessageList.add(trashMessage);
     }
+
+
 
     public boolean removeTrashInboxMessage(int i){
         if(i<trashMessageList.size()) {
@@ -37,7 +56,7 @@ public class ContainerManagement {
 
     }
 
-    public void addSpamMessage(SpamMessage spamMessage){
+    public void addSpamMessage(Message spamMessage){
         spamMessageList.add(spamMessage);
     }
 
@@ -51,7 +70,7 @@ public class ContainerManagement {
         }
     }
 
-    public void addConceptMessage(ConceptMessage conceptmessage){
+    public void addConceptMessage(Message conceptmessage){
         conceptMessageList.add(conceptmessage);
     }
 
@@ -65,7 +84,7 @@ public class ContainerManagement {
         }
     }
 
-    public void addInboxMessage(InboxMessage inboxMessage){
+    public void addInboxMessage(Message inboxMessage){
         inboxMessageList.add(inboxMessage);
     }
 
@@ -80,7 +99,7 @@ public class ContainerManagement {
 
     }
 
-    public void addSentMessage(SentMessage sentMessage){
+    public void addSentMessage(Message sentMessage){
         sentMessageList.add(sentMessage);
     }
 
@@ -95,24 +114,37 @@ public class ContainerManagement {
 
     }
 
-    public List<InboxMessage> getInboxMessageList() {
+    public void addAccount(Account account){
+        accountList.add(account);
+    }
+
+    public boolean removeAccount(Account a){
+        return accountList.remove(a);
+
+    }
+
+    public List<Message> getInboxMessageList() {
         return inboxMessageList;
     }
 
-    public List<SentMessage> getSentMessageList() {
+    public List<Message> getSentMessageList() {
         return sentMessageList;
     }
 
-    public List<TrashMessage> getTrashMessageList() {
+    public List<Message> getTrashMessageList() {
         return trashMessageList;
     }
 
-    public List<ConceptMessage> getConceptMessageList() {
+    public List<Message> getConceptMessageList() {
         return conceptMessageList;
     }
 
-    public List<SpamMessage> getSpamMessageList() {
+    public List<Message> getSpamMessageList() {
         return spamMessageList;
+    }
+
+    public List<Account> getAccountList() {
+        return accountList;
     }
 
 
