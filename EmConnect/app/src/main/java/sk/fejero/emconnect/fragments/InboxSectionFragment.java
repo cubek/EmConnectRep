@@ -20,9 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sk.fejero.emconnect.R;
+import sk.fejero.emconnect.SectionPagerAdapter;
+import sk.fejero.emconnect.mailclient.EmailMessage;
 import sk.fejero.emconnect.management.ContainerManagement;
 import sk.fejero.emconnect.management.DataLoader;
-import sk.fejero.emconnect.messages.Message;
 
 
 /**
@@ -71,9 +72,9 @@ public class InboxSectionFragment extends Fragment {
         linkList = new ArrayList<TextView>();
 
         initSideBar(inflater, leftBarParentLayout, contentParentLayout);
-        loader.loadInbox(cm);
+        /*loader.loadInbox(cm);
         loader.loadSpam(cm);
-        loader.loadTrash(cm);
+        loader.loadTrash(cm);*/
         initInboxContent(inflater,contentParentLayout,leftBarParentLayout);
 
         return rootView;
@@ -85,9 +86,9 @@ public class InboxSectionFragment extends Fragment {
         contentParentLayout.removeAllViews();
 
         initSideBar(inflater, leftBarParentLayout, contentParentLayout);
-        loader.loadInbox(cm);
+        /*loader.loadInbox(cm);
         loader.loadSpam(cm);
-        loader.loadTrash(cm);
+        loader.loadTrash(cm);*/
         initInboxContent(inflater,contentParentLayout,leftBarParentLayout);
     }
 
@@ -171,13 +172,13 @@ public class InboxSectionFragment extends Fragment {
 
 
 
-        for (Message m : cm.getInboxMessageList()){
-            final Message actualM = m;
+        for (EmailMessage m : cm.getInboxMessageList()){
+            final EmailMessage actualM = m;
             messageView = inflater.inflate(R.layout.single_inbox_layout, contentScrollLayout, false);
             LinearLayout textViewLayout = (LinearLayout)messageView.findViewById(R.id.inbox_text_layout);
 
             TextView senderTextView = (TextView)messageView.findViewById(R.id.inbox_sender);
-            senderTextView.setText(m.getAddress());
+            senderTextView.setText(m.getAuthor());
 
             TextView topicTextView = (TextView)messageView.findViewById(R.id.inbox_topic);
             topicTextView.setText(m.getSubject());
@@ -186,7 +187,7 @@ public class InboxSectionFragment extends Fragment {
             contentTextView.setText(m.getContent());
 
             TextView dateTextView = (TextView)messageView.findViewById(R.id.inbox_date);
-            dateTextView.setText(m.getDate().toString());
+            dateTextView.setText(m.getSent().toString());
 
             textViewLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -214,13 +215,13 @@ public class InboxSectionFragment extends Fragment {
         LinearLayout contentScrollLayout = (LinearLayout)contentView.findViewById(R.id.inbox_list_layout);
         contentParentLayout.addView(contentScrollView);
 
-        for (Message m : cm.getSpamMessageList()){
-            final Message actualM = m;
+        for (EmailMessage m : cm.getSpamMessageList()){
+            final EmailMessage actualM = m;
             messageView = inflater.inflate(R.layout.single_inbox_layout, contentScrollLayout, false);
             LinearLayout textViewLayout = (LinearLayout)messageView.findViewById(R.id.inbox_text_layout);
 
             TextView senderTextView = (TextView)messageView.findViewById(R.id.inbox_sender);
-            senderTextView.setText(m.getAddress());
+            senderTextView.setText(m.getAuthor());
 
             TextView topicTextView = (TextView)messageView.findViewById(R.id.inbox_topic);
             topicTextView.setText(m.getSubject());
@@ -229,7 +230,7 @@ public class InboxSectionFragment extends Fragment {
             contentTextView.setText(m.getContent());
 
             TextView dateTextView = (TextView)messageView.findViewById(R.id.inbox_date);
-            dateTextView.setText(m.getDate().toString());
+            dateTextView.setText(m.getSent().toString());
 
             textViewLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -256,13 +257,13 @@ public class InboxSectionFragment extends Fragment {
         LinearLayout contentScrollLayout = (LinearLayout)contentView.findViewById(R.id.inbox_list_layout);
         contentParentLayout.addView(contentScrollView);
 
-        for (Message m : cm.getTrashMessageList()){
-            final Message actualM = m;
+        for (EmailMessage m : cm.getTrashMessageList()){
+            final EmailMessage actualM = m;
             messageView = inflater.inflate(R.layout.single_inbox_layout, contentScrollLayout, false);
             LinearLayout textViewLayout = (LinearLayout)messageView.findViewById(R.id.inbox_text_layout);
 
             TextView senderTextView = (TextView)messageView.findViewById(R.id.inbox_sender);
-            senderTextView.setText(m.getAddress());
+            senderTextView.setText(m.getAuthor());
 
             TextView topicTextView = (TextView)messageView.findViewById(R.id.inbox_topic);
             topicTextView.setText(m.getSubject());
@@ -271,7 +272,7 @@ public class InboxSectionFragment extends Fragment {
             contentTextView.setText(m.getContent());
 
             TextView dateTextView = (TextView)messageView.findViewById(R.id.inbox_date);
-            dateTextView.setText(m.getDate().toString());
+            dateTextView.setText(m.getSent().toString());
 
             textViewLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -287,9 +288,9 @@ public class InboxSectionFragment extends Fragment {
         }
     }
 
-    private void initMessageViewLayout(final LinearLayout leftBarParentLayout, final LinearLayout contentParentLayout,Message selectedMessage, List<Message> messageList) {
+    private void initMessageViewLayout(final LinearLayout leftBarParentLayout, final LinearLayout contentParentLayout,EmailMessage selectedMessage, List<EmailMessage> messageList) {
 
-        Message actualMessage = selectedMessage;
+        EmailMessage actualMessage = selectedMessage;
         View leftPanelView = inflater.inflate(R.layout.message_left_panel, leftBarParentLayout, false);
 
         LinearLayout leftPanelLayout = (LinearLayout) leftPanelView.findViewById(R.id.left_panel_layout);
@@ -307,19 +308,19 @@ public class InboxSectionFragment extends Fragment {
         });
 
         leftPanelScrollViewContent.addView(returnButton);
-        for (Message m : messageList) {
-            final Message actualM = m;
+        for (EmailMessage m : messageList) {
+            final EmailMessage actualM = m;
             messageView = inflater.inflate(R.layout.message_overview_layout, leftPanelScrollViewContent, false);
             LinearLayout textViewLayout = (LinearLayout) messageView.findViewById(R.id.message_overview_layout);
 
             TextView senderTextView = (TextView) messageView.findViewById(R.id.inbox_sender);
-            senderTextView.setText(m.getAddress());
+            senderTextView.setText(m.getAuthor());
 
             TextView topicTextView = (TextView) messageView.findViewById(R.id.inbox_topic);
             topicTextView.setText(m.getSubject());
 
             TextView dateTextView = (TextView) messageView.findViewById(R.id.inbox_date);
-            dateTextView.setText(m.getDate().getDay() + "." + m.getDate().getMonth());
+            dateTextView.setText(m.getSent().getDay() + "." + m.getSent().getMonth());
 
             textViewLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -337,15 +338,15 @@ public class InboxSectionFragment extends Fragment {
 
 
 
-    private void initMessageContent(LinearLayout contentParentLayout, final Message selectedMessage){
+    private void initMessageContent(LinearLayout contentParentLayout, final EmailMessage selectedMessage){
         contentParentLayout.removeAllViews();
         View messageView = inflater.inflate(R.layout.message_layout, contentParentLayout, false);
         LinearLayout messageLayout = (LinearLayout)messageView.findViewById(R.id.message_layout);
 
         TextView dateView= (TextView)messageView.findViewById(R.id.date);
-        dateView.setText(selectedMessage.getDate().toString());
+        dateView.setText(selectedMessage.getSent().toString());
         TextView senderView= (TextView)messageView.findViewById(R.id.sender);
-        senderView.setText(selectedMessage.getAddress());
+        senderView.setText(selectedMessage.getAuthor());
         TextView subjectView= (TextView)messageView.findViewById(R.id.subject);
         subjectView.setText(selectedMessage.getSubject());
         TextView contentView= (TextView)messageView.findViewById(R.id.content);
@@ -356,7 +357,10 @@ public class InboxSectionFragment extends Fragment {
         replyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                cm.setTempMessage(new Message(null,selectedMessage.getAddress(),selectedMessage.getSubject(),null,selectedMessage.getContent()));
+                EmailMessage reply = new EmailMessage();
+                reply.setTo(selectedMessage.getAuthor());
+                reply.setSubject("[reply]" + selectedMessage.getSubject());
+                cm.setTempMessage(reply);
                 viewPager.setCurrentItem(2);
             }
         });
@@ -364,8 +368,10 @@ public class InboxSectionFragment extends Fragment {
         resendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                cm.setTempMessage(new Message(null,"",selectedMessage.getSubject(),null,selectedMessage.getContent()));
-
+                EmailMessage resend = new EmailMessage();
+                resend.setSubject(selectedMessage.getSubject());
+                resend.setContent(selectedMessage.getContent());
+                cm.setTempMessage(resend);
                 viewPager.setCurrentItem(2);
 
             }

@@ -15,7 +15,6 @@ import sk.fejero.emconnect.fragments.SettingsSectionFragment;
 import sk.fejero.emconnect.mailclient.outcomming.SmtpClient;
 import sk.fejero.emconnect.management.ContainerManagement;
 import sk.fejero.emconnect.management.DataLoader;
-import sk.fejero.emconnect.models.NewMessageModel;
 
 /**
  * Created by fejero on 23.10.2014.
@@ -24,15 +23,14 @@ public class SectionPagerAdapter extends FragmentPagerAdapter {
 
     private DataLoader loader;
     private ContainerManagement cm;
-    private NewMessageModel newMessageModel;
     private FragmentManager fm;
     private ViewPager viewPager;
     private SmtpClient smtpClient;
 
-    public SectionPagerAdapter(FragmentManager fm, DataLoader loader,ContainerManagement cm, NewMessageModel newMessageModel, SmtpClient smtpClient) {
+    public SectionPagerAdapter(FragmentManager fm, DataLoader loader,ContainerManagement cm, SmtpClient smtpClient) {
         super(fm);
         this.fm = fm;
-        this.newMessageModel = newMessageModel;
+        //this.newMessageModel = newMessageModel;
         this.loader = loader;
         this.cm = cm;
         this.smtpClient = smtpClient;
@@ -58,7 +56,7 @@ public class SectionPagerAdapter extends FragmentPagerAdapter {
                 return sentFragment;
             case 2:
                 NewMessageSectionFragment newMessagefragment = new NewMessageSectionFragment();
-                newMessagefragment.loadModel(newMessageModel,loader,cm, smtpClient);
+                newMessagefragment.loadModel(loader,cm, smtpClient);
                 return newMessagefragment;
             case 3:
                 SettingsSectionFragment settingsSectionFragment = new SettingsSectionFragment();

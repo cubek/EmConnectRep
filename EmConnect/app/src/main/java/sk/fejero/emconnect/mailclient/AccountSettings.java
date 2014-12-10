@@ -5,11 +5,13 @@
  */
 package sk.fejero.emconnect.mailclient;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Rastislav
  */
-public class AccountSettings {
+public class AccountSettings implements Serializable{
     
     private String userName;
     private String userPwd;

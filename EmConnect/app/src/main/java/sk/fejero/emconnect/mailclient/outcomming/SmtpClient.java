@@ -5,6 +5,7 @@
  */
 package sk.fejero.emconnect.mailclient.outcomming;
 
+import java.util.Date;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -65,7 +66,12 @@ public class SmtpClient {
         if (email.getSubject() != null) {
             message.setSubject(email.getSubject());
         }
-        message.setSentDate(email.getSent());
+        if(email.getSent() != null) {
+            message.setSentDate(email.getSent());
+        } else {
+            message.setSentDate(new Date());
+        }
+
 
         //Setting up content
         //Logger.getGlobal().log(Level.INFO, "sendMessage: setting up content");

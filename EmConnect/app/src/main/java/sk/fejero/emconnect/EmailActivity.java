@@ -2,6 +2,7 @@ package sk.fejero.emconnect;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,15 +15,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 
+import java.io.File;
+
 import javax.mail.MessagingException;
 
 import sk.fejero.emconnect.fragments.CurrentFragment;
+import sk.fejero.emconnect.fragments.NewMessageSectionFragment;
 import sk.fejero.emconnect.mailclient.AccountSettings;
 import sk.fejero.emconnect.mailclient.incomming.ImapClient;
 import sk.fejero.emconnect.mailclient.outcomming.SmtpClient;
 import sk.fejero.emconnect.management.ContainerManagement;
 import sk.fejero.emconnect.management.DataLoader;
-import sk.fejero.emconnect.models.NewMessageModel;
 
 public class EmailActivity extends FragmentActivity implements ActionBar.TabListener {
 
@@ -31,31 +34,39 @@ public class EmailActivity extends FragmentActivity implements ActionBar.TabList
     private ContainerManagement containerManagement;
     private DataLoader loader;
     private ViewPager mViewPager;
-    private NewMessageModel newMessageModel;
     private int cf;
     private AccountSettings acc;
     private ImapClient imapClient;
     private SmtpClient smtpClient;
+    private boolean offline;
 
 
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ProgressDialog progressDialog;
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Loading");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
         setContentView(R.layout.activity_email);
         containerManagement = new ContainerManagement();
         loader = new DataLoader();
-        newMessageModel = new NewMessageModel(containerManagement);
 
         Intent intent = getIntent();
-        Log.i("Intent data",intent.getStringExtra("userName"));
 
         acc = new AccountSettings(intent.getStringExtra("userName"),intent.getStringExtra("userPwd"));
         acc.setSmtpServer(intent.getStringExtra("smtpServer"));
         acc.setImapServer(intent.getStringExtra("imapServer"));
         acc.setImapPort(intent.getIntExtra("imapPort", -1));
         acc.setSmtpPort(intent.getIntExtra("smtpPort", -1));
-        acc.setDwnFolder(intent.getStringExtra("dwnFolder"));
+        String dwnf = this.getApplicationContext().getFilesDir().getAbsolutePath()+"/";
+        acc.setDwnFolder(dwnf+intent.getStringExtra("dwnFolder")+"/");
+        final File dir = new File(acc.getDwnFolder());
+        dir.mkdirs();
         acc.setStoreMails(intent.getIntExtra("storeMails", -1));
+        acc.setAuthor(intent.getStringExtra("author"));
+        offline = intent.getBooleanExtra("offline",false);
 
         imapClient = new ImapClient(acc);
         smtpClient = new SmtpClient(acc);
@@ -64,9 +75,9 @@ public class EmailActivity extends FragmentActivity implements ActionBar.TabList
         } catch (MessagingException e) {
             e.printStackTrace();
         }
-        acc.setAuthor(imapClient.getAuthor());
 
-        mAppSectionsPagerAdapter = new SectionPagerAdapter(getSupportFragmentManager(),loader,containerManagement,newMessageModel, smtpClient);
+
+        mAppSectionsPagerAdapter = new SectionPagerAdapter(getSupportFragmentManager(),loader,containerManagement, smtpClient);
         final ActionBar actionBar = getActionBar();
         actionBar.setHomeButtonEnabled(false);
 
@@ -91,8 +102,10 @@ public class EmailActivity extends FragmentActivity implements ActionBar.TabList
                             .setTabListener(this));
         }
 
-
-
+        new EmailDownloaderTask(containerManagement,imapClient).execute("Inbox","Sent","Trash");
+        if(progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
     }
 
     @Override
@@ -126,15 +139,18 @@ public class EmailActivity extends FragmentActivity implements ActionBar.TabList
 
             switch(cf){
                 case 0:
-                    loader.loadInbox(containerManagement);
+                    /*loader.loadInbox(containerManagement);
                     loader.loadSpam(containerManagement);
-                    loader.loadTrash(containerManagement);
+                    loader.loadTrash(containerManagement);*/
                     break;
                 case 1:
-                    loader.loadSent(containerManagement);
-                    loader.loadConcepts(containerManagement);
+                    /*loader.loadSent(containerManagement);
+                    loader.loadConcepts(containerManagement);*/
                     break;
                 case 2:
+                    if(containerManagement.getTempMessage() != null) {
+                        ((NewMessageSectionFragment)mAppSectionsPagerAdapter.getItem(2)).setTempMessage(containerManagement.getTempMessage());
+                    }
                     break;
                 case 3:
                     break;

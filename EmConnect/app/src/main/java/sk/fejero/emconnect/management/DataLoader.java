@@ -5,7 +5,7 @@ import java.util.Date;
 import sk.fejero.emconnect.account.Account;
 import sk.fejero.emconnect.account.AccountType;
 
-import sk.fejero.emconnect.messages.Message;
+import sk.fejero.emconnect.mailclient.EmailMessage;
 
 
 /**
@@ -13,8 +13,6 @@ import sk.fejero.emconnect.messages.Message;
  */
 public class DataLoader {
     private ContainerManagement cm;
-
-
 
     public void loadAccounts(ContainerManagement cm){
         cm.getAccountList().clear();
@@ -30,19 +28,39 @@ public class DataLoader {
     public void loadInbox(ContainerManagement cm){
         cm.getInboxMessageList().clear();
 
-        Message im = new Message(new Date(), "fejero@fejero.com", "Inbox", "", "Hello, I would like to bla bla bla...");
+        EmailMessage im = new EmailMessage();
+        im.setSent(new Date());
+        im.setTo("fejero@fejero.com");
+        im.setSubject("Inbox");
+        im.setContent("Hello, I would like to bla bla bla...");
         cm.addInboxMessage(im);
 
-        im = new Message(new Date(), "duri@fejero.com", "Penezi", "", "Hello, I would like to bla bla bla...");
+        im = new EmailMessage();
+        im.setSent(new Date());
+        im.setTo("duri@fejero.com");
+        im.setSubject("Penezi");
+        im.setContent("Hello, I would like to bla bla bla...");
         cm.addInboxMessage(im);
 
-        im = new Message(new Date(), "feri@fejero.com", "Zasilka", "", "Hello, I would like to bla bla bla...");
+        im = new EmailMessage();
+        im.setSent(new Date());
+        im.setTo("feri@fejero.com");
+        im.setSubject("Zasilka");
+        im.setContent("Hello, I would like to bla bla bla...");
         cm.addInboxMessage(im);
 
-        im = new Message(new Date(), "jany@fejero.com", "Onee", "", "Hello, I would like to bla bla bla...");
+        im = new EmailMessage();
+        im.setSent(new Date());
+        im.setTo("jany@fejero.com");
+        im.setSubject("Onee");
+        im.setContent("Hello, I would like to bla bla bla...");
         cm.addInboxMessage(im);
 
-        im = new Message(new Date(), "karci@fejero.com", "Neviem", "", "Hello, I would like to bla bla bla...");
+        im = new EmailMessage();
+        im.setSent(new Date());
+        im.setTo("karci@fejero.com");
+        im.setSubject("Neviem");
+        im.setContent("Hello, I would like to bla bla bla...");
         cm.addInboxMessage(im);
 
     }
@@ -50,51 +68,70 @@ public class DataLoader {
     public void loadSpam(ContainerManagement cm){
         cm.getSpamMessageList().clear();
 
-        Message im = new Message(new Date(), "fejero@fejero.com", "Inbox", "", "Hello, I would like to bla bla bla...");
-        cm.addSpamMessage(im);
+        EmailMessage im = new EmailMessage();
+        im.setSent(new Date());
+        im.setTo("fejero@fejero.com");
+        im.setSubject("Inbox");
+        im.setContent("Hello, I would like to bla bla bla...");
+        cm.addInboxMessage(im);
 
-        im = new Message(new Date(), "karci@fejero.com", "Inbox", "", "Hello, I would like to bla bla bla...");
-        cm.addSpamMessage(im);
+        im = new EmailMessage();
+        im.setSent(new Date());
+        im.setTo("lajci@fejero.com");
+        im.setSubject("Spam");
+        im.setContent("Hello, I would like to bla bla bla...");
+        cm.addInboxMessage(im);
 
-        im = new Message(new Date(), "lajci@fejero.com", "Spam", "", "Hello, I would like to bla bla ...");
-        cm.addSpamMessage(im);
+        im = new EmailMessage();
+        im.setSent(new Date());
+        im.setTo("duri@fejero.com");
+        im.setSubject("Sorry");
+        im.setContent("Hello, I would like to bla bla bla...");
+        cm.addInboxMessage(im);
 
-        im = new Message(new Date(), "duri@fejero.com", "Sorry", "", "Hello, I would like to bla ...");
-        cm.addSpamMessage(im);
+        im = new EmailMessage();
+        im.setSent(new Date());
+        im.setTo("feri@fejero.com");
+        im.setSubject("Omyl");
+        im.setContent("Hello, I would like to bla bla bla...");
+        cm.addInboxMessage(im);
 
-        im = new Message(new Date(), "feri@fejero.com", "Omyl", "", "Hello, I would like to ...");
-        cm.addSpamMessage(im);
+        im = new EmailMessage();
+        im.setSent(new Date());
+        im.setTo("muri@fejero.com");
+        im.setSubject("Hups");
+        im.setContent("Hello, I would like to bla bla bla...");
+        cm.addInboxMessage(im);
 
-        im = new Message(new Date(), "muri@fejero.com", "Hups", "", "Hello, I would like ...");
-        cm.addSpamMessage(im);
-
-        im = new Message(new Date(), "pista@fejero.com", "Pardon", "", "Hello, I would...");
-        cm.addSpamMessage(im);
+        im = new EmailMessage();
+        im.setSent(new Date());
+        im.setTo("pista@fejero.com");
+        im.setSubject("Pardon");
+        im.setContent("Hello, I would like to bla bla bla...");
+        cm.addInboxMessage(im);
     }
 
     public void loadTrash(ContainerManagement cm){
-        cm.getTrashMessageList().clear();
+        EmailMessage im = new EmailMessage();
+        im.setSent(new Date());
+        im.setTo("fejero@fejero.com");
+        im.setSubject("Inbox");
+        im.setContent("Hello, I would like to bla bla bla...");
+        cm.addInboxMessage(im);
 
-            Message im = new Message(new Date(), "fejero@fejero.com", "Trash", "", "Hello, I would like to bla bla bla...");
-            cm.addTrashMessage(im);
+        im = new EmailMessage();
+        im.setSent(new Date());
+        im.setTo("lajci@fejero.com");
+        im.setSubject("Spam");
+        im.setContent("Hello, I would like to bla bla bla...");
+        cm.addInboxMessage(im);
 
-        im = new Message(new Date(), "duri@fejero.com", "Trash", "", "Hello, I would like to bla bla bla...");
-        cm.addTrashMessage(im);
-
-        im = new Message(new Date(), "feri@fejero.com", "Trash", "", "Hello, I would like to bla bla bla...");
-        cm.addTrashMessage(im);
-
-        im = new Message(new Date(), "miro@fejero.com", "Trash", "", "Hello, I would like to bla bla bla...");
-        cm.addTrashMessage(im);
-
-        im = new Message(new Date(), "jano@fejero.com", "Trash", "", "Hello, I would like to bla bla bla...");
-        cm.addTrashMessage(im);
-
-        im = new Message(new Date(), "fizli@fejero.com", "Trash", "", "Hello, I would like to bla bla bla...");
-        cm.addTrashMessage(im);
-
-        im = new Message(new Date(), "blabla@fejero.com", "Trash", "", "Hello, I would like to bla bla bla...");
-        cm.addTrashMessage(im);
+        im = new EmailMessage();
+        im.setSent(new Date());
+        im.setTo("duri@fejero.com");
+        im.setSubject("Sorry");
+        im.setContent("Hello, I would like to bla bla bla...");
+        cm.addInboxMessage(im);
 
     }
 

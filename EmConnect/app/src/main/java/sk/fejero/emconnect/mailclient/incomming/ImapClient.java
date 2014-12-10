@@ -38,6 +38,7 @@ public class ImapClient {
     private final Session session;
     private final AccountSettings acc;
     private Store store;
+    private Folder emailFolder;
 
     public ImapClient(final AccountSettings acc) {
         this.acc = acc;
@@ -72,7 +73,7 @@ public class ImapClient {
         for (int i = 0; i < messages.length; i++) {
             email = new EmailMessage();
             message = messages[i];
-            email.setAuthor(Arrays.toString(message.getFrom()));
+            email.setAuthor(InternetAddress.toString(message.getFrom()));
             email.setTo(Arrays.toString(message.getRecipients(Message.RecipientType.TO)));
             email.setReceived(message.getReceivedDate());
             email.setSent(message.getSentDate());
@@ -106,6 +107,57 @@ public class ImapClient {
         emailFolder.close(false);
         store.close();
         return emails;
+    }
+
+    public void openFolder(String name) throws MessagingException {
+        emailFolder = store.getFolder(name);
+        emailFolder.open(Folder.READ_ONLY);
+    }
+
+    public void closeFolder() throws MessagingException {
+        emailFolder.close(false);
+    }
+
+    public Message[] getMessages() throws MessagingException {
+        long time= System.currentTimeMillis();
+        Date date = new Date(time - (acc.getStoreMails()*1000));
+        SearchTerm term = new ReceivedDateTerm(ComparisonTerm.GE, date);
+        return emailFolder.search(term);
+    }
+
+    public EmailMessage getMessage(Message message) throws MessagingException, IOException {
+        EmailMessage email;
+        email = new EmailMessage();
+        email.setAuthor(((InternetAddress) message.getFrom()[0]).getAddress());
+        email.setTo(Arrays.toString(message.getRecipients(Message.RecipientType.TO)));
+        email.setReceived(message.getReceivedDate());
+        email.setSent(message.getSentDate());
+        email.setSubject(message.getSubject());
+        email.setFolder(message.getFolder().getName());
+        email.setRead(message.isSet(Flags.Flag.SEEN));
+        if (message.isMimeType("multipart/*")) {
+            Multipart mp = (Multipart) message.getContent();
+            Part p;
+            String[] files = new String[mp.getCount() - 1];
+            int fc = 0;
+            for (int j = 0; j < mp.getCount(); j++) {
+                p = mp.getBodyPart(j);
+                if (p.isMimeType("text/plain")) {
+                    email.setContent(p.getContent().toString());
+                }
+                if (p.isMimeType("message/rfc822")) {
+                    email.setContent("\nNested message:\n" + p.getContent().toString());
+                }
+                if (p.getFileName() != null) {
+                    files[fc++] = p.getFileName();
+                    saveFile(p.getContent(), p.getFileName());
+                }
+            }
+            email.setAttachements(files);
+        } else {
+            email.setContent(message.getContent().toString());
+        }
+        return email;
     }
 
     public void testConnection() throws NoSuchProviderException, MessagingException {
@@ -217,7 +269,7 @@ public class ImapClient {
         store.close();
         return renamed;
     }
-    
+
     public boolean deleteFolder(String folder) throws NoSuchProviderException, MessagingException {
         boolean deleted;
         //Store store = session.getStore("imaps");
@@ -229,11 +281,15 @@ public class ImapClient {
     }
 
     private void saveFile(Object data, String filename) throws IOException {
-        InputStream x = (InputStream) data;
         FileOutputStream file = new FileOutputStream(acc.getDwnFolder() + filename);
-        int i;
-        while ((i = x.read()) != -1) {
-            file.write(i);
+        if(data instanceof String) {
+            file.write(((String) data).getBytes());
+        } else {
+            InputStream x = (InputStream) data;
+            int i;
+            while ((i = x.read()) != -1) {
+                file.write(i);
+            }
         }
     }
 }

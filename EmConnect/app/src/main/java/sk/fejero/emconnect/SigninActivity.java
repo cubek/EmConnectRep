@@ -1,10 +1,15 @@
 package sk.fejero.emconnect;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,6 +18,17 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
 import java.security.NoSuchProviderException;
 
 import javax.mail.MessagingException;
@@ -31,17 +47,13 @@ public class SigninActivity extends Activity {
     private EditText smtpEditText;
     private EditText imapPortEditText;
     private EditText smtpPortEditText;
-
+    AccountSettings acc;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.register_layout);
         //setContentView(R.layout.activity_signin);
-
-
-
         int SDK_INT = android.os.Build.VERSION.SDK_INT;
         if (SDK_INT > 8)
         {
@@ -52,6 +64,21 @@ public class SigninActivity extends Activity {
 
         }
 
+        acc = readAccount();
+
+        if(acc == null) {
+            String message = "Application is being started for the first time, regular online login is required";
+            Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG);
+            toast.show();
+            showInterface();
+            checkConnection(false);
+        } else {
+            checkConnection(true);
+        }
+    }
+
+    public void showInterface() {
+        setContentView(R.layout.register_layout);
         userEditText = (EditText)findViewById(R.id.username_text);
         userEditText.setText("rc301ve");
         passEditText = (EditText)findViewById(R.id.pass_text);
@@ -79,13 +106,17 @@ public class SigninActivity extends Activity {
                 String smtpPort = smtpPortEditText.getText().toString();
 
 
-                AccountSettings acc = new AccountSettings(user,pwd);
+                acc = new AccountSettings(user,pwd);
                 if(!imapPort.isEmpty()){
                     acc.setImapPort(Integer.parseInt(imapPort));
+                } else {
+                    acc.setImapPort(993);
                 }
 
                 if(!smtpPort.isEmpty()){
                     acc.setSmtpPort(Integer.parseInt(smtpPort));
+                } else {
+                    acc.setSmtpPort(465);
                 }
 
                 acc.setImapServer(imapServer);
@@ -93,48 +124,108 @@ public class SigninActivity extends Activity {
 
                 ImapClient imapclient = new ImapClient(acc);
 
-                try {
-                    imapclient.testConnection();
-                    verified = true;
-                } catch (javax.mail.NoSuchProviderException e ) {
-                    e.printStackTrace();
-                    Context context = getApplicationContext();
-                    CharSequence text = "J.B.M.N.T!";
-                    int duration = Toast.LENGTH_SHORT;
-
-                    Toast toast = Toast.makeText(context, text, duration);
-                    toast.show();
-                } catch (MessagingException e) {
-                    e.printStackTrace();
-                    Context context = getApplicationContext();
-                    CharSequence text = "Wrong Credentials Bro!";
-                    int duration = Toast.LENGTH_SHORT;
-
-                    Toast toast = Toast.makeText(context, text, duration);
-                    toast.show();
-                }
-
-
-                if (verified) {
-                    Intent myIntent = new Intent(SigninActivity.this,
-                            EmailActivity.class);
-
-
-                    myIntent.putExtra("userName",acc.getUserName());
-                    myIntent.putExtra("userPwd",acc.getUserPwd());
-                    myIntent.putExtra("smtpServer",acc.getSmtpServer());
-                    myIntent.putExtra("imapServer",acc.getImapServer());
-                    myIntent.putExtra("dwnFolder","mailclient");
-                    myIntent.putExtra("smtpPort",acc.getSmtpPort());
-                    myIntent.putExtra("imapPort",acc.getImapPort());
-                    myIntent.putExtra("storeMails",1209600);
-
-                    startActivity(myIntent);
-                }
+                new LoginTask(SigninActivity.this,acc).execute(imapclient);
             }
         });
     }
 
+    public void startEmailActivity() {
+        Intent myIntent;
+        myIntent = new Intent(this, EmailActivity.class);
+        myIntent.putExtra("userName",acc.getUserName());
+        myIntent.putExtra("userPwd",acc.getUserPwd());
+        myIntent.putExtra("smtpServer",acc.getSmtpServer());
+        myIntent.putExtra("imapServer",acc.getImapServer());
+        myIntent.putExtra("dwnFolder","mailclient");
+        myIntent.putExtra("smtpPort",acc.getSmtpPort());
+        myIntent.putExtra("imapPort",acc.getImapPort());
+        myIntent.putExtra("storeMails",acc.getStoreMails());
+        myIntent.putExtra("offline", true);
+        startActivity(myIntent);
+    }
+
+    public AccountSettings readAccount() {
+        AccountSettings accSet = null;
+        String uname;
+        String pwd;
+        String path = getApplicationContext().getFilesDir().getAbsolutePath();
+        File file = new File(path+"/emconconfig.emcc");
+        try {
+            Log.i("File info", "File name :" + file.getAbsolutePath());
+            FileInputStream filein = new FileInputStream(file);
+            ObjectInputStream oin = new ObjectInputStream(filein);
+            Object input =  oin.readObject();
+            if(input instanceof AccountSettings) {
+                accSet = (AccountSettings)input;
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return accSet;
+    }
+
+    public void writeAccount(AccountSettings accSet) {
+        String path = getApplicationContext().getFilesDir().getAbsolutePath();
+        File file = new File(path+"/emconconfig.emcc");
+        try {
+            FileOutputStream fileout = new FileOutputStream(file);
+            ObjectOutputStream oos = new ObjectOutputStream(fileout);
+            oos.writeObject(accSet);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void checkConnection(final boolean offline) {
+        boolean connected;
+        connected = isOnline();
+        if(connected) {
+            if(acc == null) {
+                showInterface();
+            } else {
+                ImapClient imapclient = new ImapClient(acc);
+                new LoginTask(SigninActivity.this,acc).execute(imapclient);
+            }
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Connection unavailable");
+            builder.setCancelable(false);
+            if(offline) {
+                builder.setMessage("No connection available, do you want to enter offline mode?");
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        SigninActivity.this.startEmailActivity();
+                    }
+                });
+            } else {
+                builder.setMessage("No connection available, please connect to internet");
+            }
+            builder.setNeutralButton("Retry", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    SigninActivity.this.checkConnection(offline);
+                }
+            });
+            builder.setNegativeButton("Exit", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    SigninActivity.this.finish();
+                }
+            });
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
+    }
+
+    private boolean isOnline() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
