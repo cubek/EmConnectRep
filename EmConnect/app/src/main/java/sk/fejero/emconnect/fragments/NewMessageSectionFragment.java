@@ -96,6 +96,7 @@ public class NewMessageSectionFragment extends Fragment {
                 message.setSubject(subjectEditText.getText().toString());
                 message.setCc(ccEditText.getText().toString());
                 message.setContent(contentEditText.getText().toString());
+                setTexteditFields();
                 new SendMessageTask((EmailActivity)NewMessageSectionFragment.this.getActivity(), smtpClient).execute(message);
             }
         });
@@ -116,10 +117,23 @@ public class NewMessageSectionFragment extends Fragment {
                 message.setCc(ccEditText.getText().toString());
                 message.setContent(contentEditText.getText().toString());
                 message.setSent(new Date());
+                setTexteditFields();
                 cm.addConceptMessage(message);
             }
         });
 
+        if(cm.getTempMessage() != null) {
+            setTempMessage(cm.getTempMessage());
+        }
+
         return rootView;
     }
+
+    public void setTexteditFields(){
+        Log.i("New Message", "Setting fields values");
+        addressEditText.getText().clear();
+        subjectEditText.getText().clear();
+        contentEditText.getText().clear();
+    }
+
 }

@@ -105,8 +105,8 @@ public class SettingsSectionFragment extends Fragment{
     }
 
     private void initAccountSettings(LinearLayout accountSettingsLayout){
-        loader.loadAccounts(cm);
+        //loader.loadAccounts(cm);
         TextView accountNameTextView = (TextView)accountSettingsLayout.findViewById(R.id.account_name_text);
-        accountNameTextView.setText(loader.loadCurrentAccount(cm).getAddress());
+        //accountNameTextView.setText(loader.loadCurrentAccount(cm).getAddress());
     }
 }

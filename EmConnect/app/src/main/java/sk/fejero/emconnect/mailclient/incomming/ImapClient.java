@@ -23,7 +23,6 @@ import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.internet.InternetAddress;
 import javax.mail.search.ComparisonTerm;
-import javax.mail.search.DateTerm;
 import javax.mail.search.ReceivedDateTerm;
 import javax.mail.search.SearchTerm;
 import sk.fejero.emconnect.mailclient.AccountSettings;
@@ -98,7 +97,7 @@ public class ImapClient {
                         saveFile(p.getContent(), p.getFileName());
                     }
                 }
-                email.setAttachements(files);
+                email.setAttachments(files);
             } else {
                 email.setContent(message.getContent().toString());
             }
@@ -153,7 +152,7 @@ public class ImapClient {
                     saveFile(p.getContent(), p.getFileName());
                 }
             }
-            email.setAttachements(files);
+            email.setAttachments(files);
         } else {
             email.setContent(message.getContent().toString());
         }
@@ -232,7 +231,7 @@ public class ImapClient {
                         saveFile(p.getContent(), p.getFileName());
                     }
                 }
-                email.setAttachements(files);
+                email.setAttachments(files);
             } else {
                 email.setContent(message.getContent().toString());
             }

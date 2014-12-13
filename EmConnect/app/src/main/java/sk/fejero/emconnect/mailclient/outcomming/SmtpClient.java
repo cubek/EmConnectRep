@@ -7,8 +7,7 @@ package sk.fejero.emconnect.mailclient.outcomming;
 
 import java.util.Date;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
@@ -54,7 +53,7 @@ public class SmtpClient {
     
     public void sendMessage(EmailMessage email) throws MessagingException {
         Message message = new MimeMessage(session);
-        String[] attachements = email.getAttachements();
+        String[] attachements = email.getAttachments();
 
         //Setting up header
         //Logger.getGlobal().log(Level.INFO, "sendMessage: setting up header");

@@ -45,7 +45,7 @@ public class DataLoader {
     private List<EmailMessage> readEmails(String dir) {
         List<EmailMessage> messages = null;
         try {
-            FileInputStream filein = new FileInputStream(folder+dir+".cmm");
+            FileInputStream filein = new FileInputStream(folder+dir+".emcc");
             ObjectInputStream oin = new ObjectInputStream(filein);
             Object input =  oin.readObject();
             if(input instanceof List) {

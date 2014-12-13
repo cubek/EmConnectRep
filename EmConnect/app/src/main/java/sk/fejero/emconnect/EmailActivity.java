@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -65,15 +66,6 @@ public class EmailActivity extends FragmentActivity implements ActionBar.TabList
         acc.setAuthor(intent.getStringExtra("author"));
         offline = intent.getBooleanExtra("offline",false);
 
-        imapClient = new ImapClient(acc);
-        smtpClient = new SmtpClient(acc);
-        try {
-            imapClient.initStore();
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
-
-
         mAppSectionsPagerAdapter = new SectionPagerAdapter(getSupportFragmentManager(),loader,containerManagement, smtpClient);
         final ActionBar actionBar = getActionBar();
         actionBar.setHomeButtonEnabled(false);
@@ -99,10 +91,18 @@ public class EmailActivity extends FragmentActivity implements ActionBar.TabList
                             .setTabListener(this));
         }
 
+        Log.i("EmailActivity", "Offline mode: "+offline);
         if (offline) {
             loader.loadAllFolders(containerManagement);
         } else {
-            new EmailDownloaderTask(containerManagement,imapClient,dwnf).execute("Inbox","Sent","Trash");
+            imapClient = new ImapClient(acc);
+            smtpClient = new SmtpClient(acc);
+            try {
+                imapClient.initStore();
+                new EmailDownloaderTask(containerManagement,imapClient,dwnf).execute("Inbox","Sent","Trash");
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
         }
 
         if(progressDialog.isShowing()) {

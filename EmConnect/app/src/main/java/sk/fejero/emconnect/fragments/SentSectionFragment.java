@@ -63,8 +63,8 @@ public class SentSectionFragment extends Fragment {
         LinearLayout leftBarParentLayout = (LinearLayout)rootView.findViewById(R.id.sent_link_list_layout);
 
         initSideBar(inflater,leftBarParentLayout,contentParentLayout);
-        loader.loadSent(cm);
-        loader.loadConcepts(cm);
+        //loader.loadSent(cm);
+        //loader.loadConcepts(cm);
         initSentContent(inflater, contentParentLayout,leftBarParentLayout);
 
         return rootView;
@@ -82,9 +82,9 @@ public class SentSectionFragment extends Fragment {
         contentParentLayout.removeAllViews();
 
         initSideBar(inflater, leftBarParentLayout, contentParentLayout);
-        loader.loadInbox(cm);
-        loader.loadSpam(cm);
-        loader.loadTrash(cm);
+        //loader.loadInbox(cm);
+        //loader.loadSpam(cm);
+        //loader.loadTrash(cm);
         initSentContent(inflater, contentParentLayout, leftBarParentLayout);
     }
 

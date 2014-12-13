@@ -5,13 +5,14 @@
  */
 package sk.fejero.emconnect.mailclient;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  *
  * @author Rastislav
  */
-public class EmailMessage {
+public class EmailMessage implements Serializable{
     
     private String author;
     private String to;
@@ -21,7 +22,7 @@ public class EmailMessage {
     private String subject;
     private String content;
     private String folder;
-    private String[] attachements;
+    private String[] attachments;
     private boolean read;
 
     public EmailMessage() {
@@ -67,12 +68,12 @@ public class EmailMessage {
         this.content = content;
     }
 
-    public String[] getAttachements() {
-        return attachements;
+    public String[] getAttachments() {
+        return attachments;
     }
 
-    public void setAttachements(String[] attachements) {
-        this.attachements = attachements;
+    public void setAttachments(String[] attachments) {
+        this.attachments = attachments;
     }
 
     public Date getSent() {
@@ -108,7 +109,7 @@ public class EmailMessage {
     }
     
     public void clear() {
-        attachements = null;
+        attachments = null;
         author = null;
         cc = null;
         content = null;

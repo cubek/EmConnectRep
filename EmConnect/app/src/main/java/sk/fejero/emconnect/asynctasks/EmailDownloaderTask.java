@@ -1,9 +1,7 @@
 package sk.fejero.emconnect.asynctasks;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,7 +13,6 @@ import java.util.Arrays;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 
-import sk.fejero.emconnect.mailclient.AccountSettings;
 import sk.fejero.emconnect.mailclient.EmailMessage;
 import sk.fejero.emconnect.mailclient.incomming.ImapClient;
 import sk.fejero.emconnect.management.ContainerManagement;
@@ -59,10 +56,11 @@ public class EmailDownloaderTask extends AsyncTask<String, EmailMessage, String>
 
     @Override
     protected void onProgressUpdate(EmailMessage... msg) {
-        Log.i("Email info", "Msg  from:" + msg[0].getAuthor());
+        /*Log.i("Email info", "Msg  from:" + msg[0].getAuthor());
         Log.i("Email info", "Msg  date:" + msg[0].getSent());
         Log.i("Email info", "Msg  body:" + msg[0].getContent().substring(0,100));
-        Log.i("Email info", "Msg files:" + Arrays.toString(msg[0].getAttachements()));
+        Log.i("Email info", "Msg files:" + Arrays.toString(msg[0].getAttachments()));*/
+        Log.i("Email info", "Msg received");
         if(msg[0].getFolder().equalsIgnoreCase("inbox")) {
             cm.addInboxMessage(msg[0]);
         }
@@ -90,16 +88,19 @@ public class EmailDownloaderTask extends AsyncTask<String, EmailMessage, String>
             FileOutputStream fileOut = new FileOutputStream(file);
             ObjectOutputStream oos = new ObjectOutputStream(fileOut);
             oos.writeObject(cm.getInboxMessageList());
+            Log.i("File info", "File name :" + file.getAbsolutePath());
 
             file = new File(folder+"sent.emcc");
             fileOut = new FileOutputStream(file);
             oos = new ObjectOutputStream(fileOut);
             oos.writeObject(cm.getSentMessageList());
+            Log.i("File info", "File name :" + file.getAbsolutePath());
 
             file = new File(folder+"trash.emcc");
             fileOut = new FileOutputStream(file);
             oos = new ObjectOutputStream(fileOut);
-            oos.writeObject(cm.getSentMessageList());
+            oos.writeObject(cm.getTrashMessageList());
+            Log.i("File info", "File name :" + file.getAbsolutePath());
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
