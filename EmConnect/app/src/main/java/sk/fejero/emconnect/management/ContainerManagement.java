@@ -43,7 +43,8 @@ public class ContainerManagement {
     }
 
     public void addTrashMessage(EmailMessage trashMessage){
-        trashMessageList.add(trashMessage);
+        trashMessageList.add(0,trashMessage);
+
     }
 
 
@@ -60,7 +61,7 @@ public class ContainerManagement {
     }
 
     public void addSpamMessage(EmailMessage spamMessage){
-        spamMessageList.add(spamMessage);
+        spamMessageList.add(0,spamMessage);
     }
 
     public boolean removeSpamMessage(int i){
@@ -74,7 +75,7 @@ public class ContainerManagement {
     }
 
     public void addConceptMessage(EmailMessage conceptmessage){
-        conceptMessageList.add(conceptmessage);
+        conceptMessageList.add(0,conceptmessage);
     }
 
     public boolean removeConceptMessage(int i){
@@ -88,7 +89,7 @@ public class ContainerManagement {
     }
 
     public void addInboxMessage(EmailMessage inboxMessage){
-        inboxMessageList.add(inboxMessage);
+        inboxMessageList.add(0,inboxMessage);
     }
 
     public boolean removeInboxMessage(int i){
@@ -103,7 +104,7 @@ public class ContainerManagement {
     }
 
     public void addSentMessage(EmailMessage sentMessage){
-        sentMessageList.add(sentMessage);
+        sentMessageList.add(0,sentMessage);
     }
 
     public boolean removeSentMessage(int i){

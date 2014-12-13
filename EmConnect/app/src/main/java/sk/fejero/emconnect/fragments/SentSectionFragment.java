@@ -145,8 +145,8 @@ public class SentSectionFragment extends Fragment {
             messageView = inflater.inflate(R.layout.single_inbox_layout, contentScrollLayout, false);
             LinearLayout textViewLayout = (LinearLayout)messageView.findViewById(R.id.inbox_text_layout);
 
-            TextView senderTextView = (TextView)messageView.findViewById(R.id.inbox_sender);
-            senderTextView.setText(m.getAuthor());
+            TextView addressTextView = (TextView)messageView.findViewById(R.id.inbox_sender);
+            addressTextView.setText(m.getTo());
 
             TextView topicTextView = (TextView)messageView.findViewById(R.id.inbox_topic);
             topicTextView.setText(m.getSubject());

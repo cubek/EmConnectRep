@@ -6,10 +6,12 @@ import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import sk.fejero.emconnect.R;
+import sk.fejero.emconnect.management.AccountSettingsBundle;
 import sk.fejero.emconnect.management.ContainerManagement;
 import sk.fejero.emconnect.management.DataLoader;
 
@@ -101,12 +103,31 @@ public class SettingsSectionFragment extends Fragment{
             }
         });
 
+
+
         return rootView;
     }
 
     private void initAccountSettings(LinearLayout accountSettingsLayout){
-        //loader.loadAccounts(cm);
-        TextView accountNameTextView = (TextView)accountSettingsLayout.findViewById(R.id.account_name_text);
-        //accountNameTextView.setText(loader.loadCurrentAccount(cm).getAddress());
+
+        final TextView userNameTextView = (TextView)accountSettingsLayout.findViewById(R.id.name_edit);
+        final TextView passwordTextView = (TextView)accountSettingsLayout.findViewById(R.id.pass_edit);
+        final TextView imapServerTextView = (TextView)accountSettingsLayout.findViewById(R.id.imap_server_edit);
+        final TextView imapPortTextView = (TextView)accountSettingsLayout.findViewById(R.id.imap_port_edit);
+        final TextView smtpServerTextView = (TextView)accountSettingsLayout.findViewById(R.id.smtp_server_edit);
+        final TextView smtpPortTextView = (TextView)accountSettingsLayout.findViewById(R.id.smtp_port_edit);
+        final TextView backUpTextView = (TextView)accountSettingsLayout.findViewById(R.id.back_up_edit);
+        Button confirtButton = (Button)accountSettingsLayout.findViewById(R.id.confirm_account_settings_button);
+
+        confirtButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AccountSettingsBundle bundle = new AccountSettingsBundle(userNameTextView.getText().toString(),passwordTextView.getText().toString(),imapServerTextView.getText().toString(),imapPortTextView.getText().toString(),smtpServerTextView.getText().toString(),smtpPortTextView.getText().toString(),backUpTextView.getText().toString());
+
+                //proceedSettings(bundle);
+            }
+        });
     }
 }
+
+
