@@ -15,27 +15,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStreamWriter;
-import java.security.NoSuchProviderException;
 
-import javax.mail.MessagingException;
-
+import sk.fejero.emconnect.asynctasks.LoginTask;
 import sk.fejero.emconnect.mailclient.AccountSettings;
 import sk.fejero.emconnect.mailclient.incomming.ImapClient;
-import sk.fejero.emconnect.mailclient.outcomming.SmtpClient;
 
 
 public class SigninActivity extends Activity {

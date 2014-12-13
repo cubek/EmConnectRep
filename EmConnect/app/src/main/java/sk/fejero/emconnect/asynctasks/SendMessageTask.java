@@ -1,4 +1,4 @@
-package sk.fejero.emconnect;
+package sk.fejero.emconnect.asynctasks;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import javax.mail.MessagingException;
 
+import sk.fejero.emconnect.EmailActivity;
 import sk.fejero.emconnect.mailclient.AccountSettings;
 import sk.fejero.emconnect.mailclient.EmailMessage;
 import sk.fejero.emconnect.mailclient.incomming.ImapClient;
@@ -38,7 +39,11 @@ public class SendMessageTask extends AsyncTask<EmailMessage, Integer , Boolean[]
         for (int i = 0; i < numOfMsgs; i++) {
             try {
                 sent[i] = false;
-                client.sendMessage(params[i]);
+                if(activity.isOffline()) {
+                    //TO-DO ulozit maily na odoslanie neskor
+                } else {
+                    client.sendMessage(params[i]);
+                }
                 sent[i] = true;
                 publishProgress((int) ((i / (float) numOfMsgs) * 100));
             } catch (MessagingException e) {
@@ -70,12 +75,16 @@ public class SendMessageTask extends AsyncTask<EmailMessage, Integer , Boolean[]
             progressDialog.dismiss();
         }
         StringBuilder message = new StringBuilder();
-        for(int i = 0; i < sent.length; i++){
-            message.append("Message "+(i+1));
-            if (sent[i]) {
-                message.append(" sent\n");
-            } else {
-                message.append(error[i]);
+        if(activity.isOffline()) {
+            message.append("Message/s saved for later sending.");
+        } else {
+            for(int i = 0; i < sent.length; i++){
+                message.append("Message "+(i+1));
+                if (sent[i]) {
+                    message.append(" sent\n");
+                } else {
+                    message.append(error[i]);
+                }
             }
         }
         Context context = activity.getApplicationContext();

@@ -3,8 +3,6 @@ package sk.fejero.emconnect.management;
 import java.util.ArrayList;
 import java.util.List;
 
-import sk.fejero.emconnect.account.Account;
-
 import sk.fejero.emconnect.mailclient.EmailMessage;
 
 /**
@@ -17,11 +15,21 @@ public class ContainerManagement {
     private List<EmailMessage> trashMessageList = new ArrayList<EmailMessage>();
     private List<EmailMessage> spamMessageList = new ArrayList<EmailMessage>();
     private List<EmailMessage> conceptMessageList = new ArrayList<EmailMessage>();
-    private List<Account> accountList = new ArrayList<Account>();
-    private Account currentAccount;
+    //private List<Account> accountList = new ArrayList<Account>();
+    //private Account currentAccount;
     private EmailMessage tempMessage=null;
 
+    public void setInboxMessageList(List<EmailMessage> inboxMessageList) {
+        this.inboxMessageList = inboxMessageList;
+    }
 
+    public void setSentMessageList(List<EmailMessage> sentMessageList) {
+        this.sentMessageList = sentMessageList;
+    }
+
+    public void setTrashMessageList(List<EmailMessage> trashMessageList) {
+        this.trashMessageList = trashMessageList;
+    }
 
     public void setTempMessage(EmailMessage message){
 
@@ -33,10 +41,6 @@ public class ContainerManagement {
         //Log.i("Get temp", tempMessage.getAddress());
         return tempMessage;
     }
-
-
-
-
 
     public void addTrashMessage(EmailMessage trashMessage){
         trashMessageList.add(trashMessage);
@@ -113,14 +117,18 @@ public class ContainerManagement {
 
     }
 
-    public void addAccount(Account account){
+    /*public void addAccount(Account account){
         accountList.add(account);
+    }
+
+    public List<Account> getAccountList() {
+        return accountList;
     }
 
     public boolean removeAccount(Account a){
         return accountList.remove(a);
 
-    }
+    }*/
 
     public List<EmailMessage> getInboxMessageList() {
         return inboxMessageList;
@@ -141,10 +149,4 @@ public class ContainerManagement {
     public List<EmailMessage> getSpamMessageList() {
         return spamMessageList;
     }
-
-    public List<Account> getAccountList() {
-        return accountList;
-    }
-
-
 }

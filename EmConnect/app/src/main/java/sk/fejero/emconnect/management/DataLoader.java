@@ -1,9 +1,10 @@
 package sk.fejero.emconnect.management;
 
-import java.util.Date;
-
-import sk.fejero.emconnect.account.Account;
-import sk.fejero.emconnect.account.AccountType;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.List;
 
 import sk.fejero.emconnect.mailclient.EmailMessage;
 
@@ -12,9 +13,21 @@ import sk.fejero.emconnect.mailclient.EmailMessage;
  * Created by fejero on 6.11.2014.
  */
 public class DataLoader {
-    private ContainerManagement cm;
 
-    public void loadAccounts(ContainerManagement cm){
+    //private ContainerManagement cm;
+    private String folder;
+
+    public DataLoader(String folder) {
+        this.folder = folder;
+    }
+
+    public void loadAllFolders(ContainerManagement cm) {
+        loadInbox(cm);
+        loadSent(cm);
+        loadTrash(cm);
+    }
+
+    /*public void loadAccounts(ContainerManagement cm){
         cm.getAccountList().clear();
         Account account;
 
@@ -25,122 +38,60 @@ public class DataLoader {
         cm.addAccount(account);
     }
 
+    public Account loadCurrentAccount(ContainerManagement cm) {
+        return cm.getAccountList().get(0);
+    }*/
+
+    private List<EmailMessage> readEmails(String dir) {
+        List<EmailMessage> messages = null;
+        try {
+            FileInputStream filein = new FileInputStream(folder+dir+".cmm");
+            ObjectInputStream oin = new ObjectInputStream(filein);
+            Object input =  oin.readObject();
+            if(input instanceof List) {
+                messages = (List<EmailMessage>)input;
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return messages;
+    }
+
     public void loadInbox(ContainerManagement cm){
-        cm.getInboxMessageList().clear();
-
-        EmailMessage im = new EmailMessage();
-        im.setSent(new Date());
-        im.setTo("fejero@fejero.com");
-        im.setSubject("Inbox");
-        im.setContent("Hello, I would like to bla bla bla...");
-        cm.addInboxMessage(im);
-
-        im = new EmailMessage();
-        im.setSent(new Date());
-        im.setTo("duri@fejero.com");
-        im.setSubject("Penezi");
-        im.setContent("Hello, I would like to bla bla bla...");
-        cm.addInboxMessage(im);
-
-        im = new EmailMessage();
-        im.setSent(new Date());
-        im.setTo("feri@fejero.com");
-        im.setSubject("Zasilka");
-        im.setContent("Hello, I would like to bla bla bla...");
-        cm.addInboxMessage(im);
-
-        im = new EmailMessage();
-        im.setSent(new Date());
-        im.setTo("jany@fejero.com");
-        im.setSubject("Onee");
-        im.setContent("Hello, I would like to bla bla bla...");
-        cm.addInboxMessage(im);
-
-        im = new EmailMessage();
-        im.setSent(new Date());
-        im.setTo("karci@fejero.com");
-        im.setSubject("Neviem");
-        im.setContent("Hello, I would like to bla bla bla...");
-        cm.addInboxMessage(im);
-
+        List<EmailMessage> messages;
+        messages = readEmails("inbox");
+        if(messages != null) {
+            cm.setInboxMessageList(messages);
+        }
     }
 
     public void loadSpam(ContainerManagement cm){
-        cm.getSpamMessageList().clear();
-
-        EmailMessage im = new EmailMessage();
-        im.setSent(new Date());
-        im.setTo("fejero@fejero.com");
-        im.setSubject("Inbox");
-        im.setContent("Hello, I would like to bla bla bla...");
-        cm.addInboxMessage(im);
-
-        im = new EmailMessage();
-        im.setSent(new Date());
-        im.setTo("lajci@fejero.com");
-        im.setSubject("Spam");
-        im.setContent("Hello, I would like to bla bla bla...");
-        cm.addInboxMessage(im);
-
-        im = new EmailMessage();
-        im.setSent(new Date());
-        im.setTo("duri@fejero.com");
-        im.setSubject("Sorry");
-        im.setContent("Hello, I would like to bla bla bla...");
-        cm.addInboxMessage(im);
-
-        im = new EmailMessage();
-        im.setSent(new Date());
-        im.setTo("feri@fejero.com");
-        im.setSubject("Omyl");
-        im.setContent("Hello, I would like to bla bla bla...");
-        cm.addInboxMessage(im);
-
-        im = new EmailMessage();
-        im.setSent(new Date());
-        im.setTo("muri@fejero.com");
-        im.setSubject("Hups");
-        im.setContent("Hello, I would like to bla bla bla...");
-        cm.addInboxMessage(im);
-
-        im = new EmailMessage();
-        im.setSent(new Date());
-        im.setTo("pista@fejero.com");
-        im.setSubject("Pardon");
-        im.setContent("Hello, I would like to bla bla bla...");
-        cm.addInboxMessage(im);
+        /*List<EmailMessage> messages;
+        messages = readEmails("spam");
+        if(messages != null) {
+            cm.set(messages);
+        }*/
     }
 
     public void loadTrash(ContainerManagement cm){
-        EmailMessage im = new EmailMessage();
-        im.setSent(new Date());
-        im.setTo("fejero@fejero.com");
-        im.setSubject("Inbox");
-        im.setContent("Hello, I would like to bla bla bla...");
-        cm.addInboxMessage(im);
-
-        im = new EmailMessage();
-        im.setSent(new Date());
-        im.setTo("lajci@fejero.com");
-        im.setSubject("Spam");
-        im.setContent("Hello, I would like to bla bla bla...");
-        cm.addInboxMessage(im);
-
-        im = new EmailMessage();
-        im.setSent(new Date());
-        im.setTo("duri@fejero.com");
-        im.setSubject("Sorry");
-        im.setContent("Hello, I would like to bla bla bla...");
-        cm.addInboxMessage(im);
+        List<EmailMessage> messages;
+        messages = readEmails("trash");
+        if(messages != null) {
+            cm.setTrashMessageList(messages);
+        }
 
     }
 
     public void loadSent(ContainerManagement cm){
-        /*cm.getSentMessageList().clear();
-        for (int i = 0; i < 1; i++) {
-            SentMessage im = new SentMessage(new Date(), "fejero@fejero.com", "Sent", "", "Hello, I would like to bla bla bla...");
-            cm.addSentMessage(im);
-        }*/
+        List<EmailMessage> messages;
+        messages = readEmails("sent");
+        if(messages != null) {
+            cm.setSentMessageList(messages);
+        }
     }
 
     public void loadConcepts(ContainerManagement cm){
@@ -149,10 +100,5 @@ public class DataLoader {
             ConceptMessage im = new ConceptMessage(new Date(), "fejero@fejero.com", "Concept", "", "Hello, I would like to bla bla bla...");
             cm.addConceptMessage(im);
         }*/
-    }
-
-
-    public Account loadCurrentAccount(ContainerManagement cm) {
-        return cm.getAccountList().get(0);
     }
 }

@@ -5,11 +5,8 @@ import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,7 +16,7 @@ import java.io.File;
 
 import javax.mail.MessagingException;
 
-import sk.fejero.emconnect.fragments.CurrentFragment;
+import sk.fejero.emconnect.asynctasks.EmailDownloaderTask;
 import sk.fejero.emconnect.fragments.NewMessageSectionFragment;
 import sk.fejero.emconnect.mailclient.AccountSettings;
 import sk.fejero.emconnect.mailclient.incomming.ImapClient;
@@ -51,7 +48,8 @@ public class EmailActivity extends FragmentActivity implements ActionBar.TabList
         progressDialog.show();
         setContentView(R.layout.activity_email);
         containerManagement = new ContainerManagement();
-        loader = new DataLoader();
+        String dwnf = this.getApplicationContext().getFilesDir().getAbsolutePath()+"/";
+        loader = new DataLoader(dwnf);
 
         Intent intent = getIntent();
 
@@ -60,7 +58,6 @@ public class EmailActivity extends FragmentActivity implements ActionBar.TabList
         acc.setImapServer(intent.getStringExtra("imapServer"));
         acc.setImapPort(intent.getIntExtra("imapPort", -1));
         acc.setSmtpPort(intent.getIntExtra("smtpPort", -1));
-        String dwnf = this.getApplicationContext().getFilesDir().getAbsolutePath()+"/";
         acc.setDwnFolder(dwnf+intent.getStringExtra("dwnFolder")+"/");
         final File dir = new File(acc.getDwnFolder());
         dir.mkdirs();
@@ -102,7 +99,12 @@ public class EmailActivity extends FragmentActivity implements ActionBar.TabList
                             .setTabListener(this));
         }
 
-        new EmailDownloaderTask(containerManagement,imapClient).execute("Inbox","Sent","Trash");
+        if (offline) {
+            loader.loadAllFolders(containerManagement);
+        } else {
+            new EmailDownloaderTask(containerManagement,imapClient,dwnf).execute("Inbox","Sent","Trash");
+        }
+
         if(progressDialog.isShowing()) {
             progressDialog.dismiss();
         }
@@ -159,6 +161,10 @@ public class EmailActivity extends FragmentActivity implements ActionBar.TabList
 
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public boolean isOffline() {
+        return offline;
     }
 
     @Override

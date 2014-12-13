@@ -1,17 +1,15 @@
-package sk.fejero.emconnect;
+package sk.fejero.emconnect.asynctasks;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
-import java.util.SimpleTimeZone;
 
 import javax.mail.MessagingException;
 
-import sk.fejero.emconnect.account.Account;
+import sk.fejero.emconnect.EmailActivity;
+import sk.fejero.emconnect.SigninActivity;
 import sk.fejero.emconnect.mailclient.AccountSettings;
 import sk.fejero.emconnect.mailclient.incomming.ImapClient;
 

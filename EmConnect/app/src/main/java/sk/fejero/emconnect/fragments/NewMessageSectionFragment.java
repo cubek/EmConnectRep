@@ -11,11 +11,9 @@ import android.widget.ImageButton;
 
 import java.util.Date;
 
-import javax.mail.MessagingException;
-
 import sk.fejero.emconnect.EmailActivity;
 import sk.fejero.emconnect.R;
-import sk.fejero.emconnect.SendMessageTask;
+import sk.fejero.emconnect.asynctasks.SendMessageTask;
 import sk.fejero.emconnect.mailclient.EmailMessage;
 import sk.fejero.emconnect.mailclient.outcomming.SmtpClient;
 import sk.fejero.emconnect.management.ContainerManagement;

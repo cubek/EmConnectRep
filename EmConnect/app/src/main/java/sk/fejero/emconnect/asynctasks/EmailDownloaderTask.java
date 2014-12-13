@@ -1,16 +1,21 @@
-package sk.fejero.emconnect;
+package sk.fejero.emconnect.asynctasks;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.Arrays;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
 
+import sk.fejero.emconnect.mailclient.AccountSettings;
 import sk.fejero.emconnect.mailclient.EmailMessage;
 import sk.fejero.emconnect.mailclient.incomming.ImapClient;
 import sk.fejero.emconnect.management.ContainerManagement;
@@ -22,10 +27,12 @@ public class EmailDownloaderTask extends AsyncTask<String, EmailMessage, String>
 
     private ContainerManagement cm;
     private ImapClient imap;
+    private String folder;
 
-    public EmailDownloaderTask(ContainerManagement cm, ImapClient imap){
+    public EmailDownloaderTask(ContainerManagement cm, ImapClient imap, String folder){
         this.cm = cm;
         this.imap = imap;
+        this.folder = folder;
     }
 
     @Override
@@ -78,5 +85,25 @@ public class EmailDownloaderTask extends AsyncTask<String, EmailMessage, String>
     @Override
     protected void onPostExecute(String a) {
         super.onPostExecute(a);
+        try {
+            File file = new File(folder+"inbox.emcc");
+            FileOutputStream fileOut = new FileOutputStream(file);
+            ObjectOutputStream oos = new ObjectOutputStream(fileOut);
+            oos.writeObject(cm.getInboxMessageList());
+
+            file = new File(folder+"sent.emcc");
+            fileOut = new FileOutputStream(file);
+            oos = new ObjectOutputStream(fileOut);
+            oos.writeObject(cm.getSentMessageList());
+
+            file = new File(folder+"trash.emcc");
+            fileOut = new FileOutputStream(file);
+            oos = new ObjectOutputStream(fileOut);
+            oos.writeObject(cm.getSentMessageList());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
