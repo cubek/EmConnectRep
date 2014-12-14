@@ -2,16 +2,11 @@ package sk.fejero.emconnect.asynctasks;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.widget.Toast;
-
 import javax.mail.MessagingException;
-
 import sk.fejero.emconnect.EmailActivity;
-import sk.fejero.emconnect.mailclient.AccountSettings;
 import sk.fejero.emconnect.mailclient.EmailMessage;
-import sk.fejero.emconnect.mailclient.incomming.ImapClient;
 import sk.fejero.emconnect.mailclient.outcomming.SmtpClient;
 
 /**
@@ -79,7 +74,7 @@ public class SendMessageTask extends AsyncTask<EmailMessage, Integer , Boolean[]
             message.append("Message/s saved for later sending.");
         } else {
             for(int i = 0; i < sent.length; i++){
-                message.append("Message "+(i+1));
+                message.append("Message ").append(i + 1);
                 if (sent[i]) {
                     message.append(" sent\n");
                 } else {

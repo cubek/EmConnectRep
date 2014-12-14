@@ -5,9 +5,6 @@ import java.util.List;
 
 import sk.fejero.emconnect.mailclient.EmailMessage;
 
-/**
- * Created by fejero on 5.11.2014.
- */
 public class ContainerManagement {
 
     private List<EmailMessage> inboxMessageList = new ArrayList<EmailMessage>();

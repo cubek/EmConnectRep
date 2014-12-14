@@ -11,12 +11,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-
-
 import java.io.File;
-
 import javax.mail.MessagingException;
-
 import sk.fejero.emconnect.asynctasks.EmailDownloaderTask;
 import sk.fejero.emconnect.fragments.NewMessageSectionFragment;
 import sk.fejero.emconnect.mailclient.AccountSettings;

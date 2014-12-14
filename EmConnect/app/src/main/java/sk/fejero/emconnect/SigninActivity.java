@@ -16,7 +16,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,7 +23,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
 import sk.fejero.emconnect.asynctasks.LoginTask;
 import sk.fejero.emconnect.mailclient.AccountSettings;
 import sk.fejero.emconnect.mailclient.incomming.ImapClient;
@@ -88,7 +86,6 @@ public class SigninActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                boolean verified = false;
                 String user = userEditText.getText().toString();
                 String pwd = passEditText.getText().toString();
 
@@ -138,8 +135,6 @@ public class SigninActivity extends Activity {
 
     public AccountSettings readAccount() {
         AccountSettings accSet = null;
-        String uname;
-        String pwd;
         String path = getApplicationContext().getFilesDir().getAbsolutePath();
         File file = new File(path+"/emconconfig.emcc");
         try {
@@ -232,9 +227,6 @@ public class SigninActivity extends Activity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 }

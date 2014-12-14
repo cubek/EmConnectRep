@@ -11,9 +11,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import java.util.List;
-
 import sk.fejero.emconnect.R;
 import sk.fejero.emconnect.mailclient.EmailMessage;
 import sk.fejero.emconnect.management.ContainerManagement;
@@ -215,7 +213,6 @@ public class SentSectionFragment extends Fragment {
 
     private void initMessageViewLayout(final LinearLayout leftBarParentLayout, final LinearLayout contentParentLayout,EmailMessage selectedMessage, List<EmailMessage> messageList) {
 
-        EmailMessage actualMessage = selectedMessage;
         View leftPanelView = inflater.inflate(R.layout.message_left_panel, leftBarParentLayout, false);
 
         LinearLayout leftPanelLayout = (LinearLayout) leftPanelView.findViewById(R.id.left_panel_layout);
@@ -257,7 +254,7 @@ public class SentSectionFragment extends Fragment {
             leftPanelScrollViewContent.addView(textViewLayout);
         }
 
-        initMessageContent(contentParentLayout,actualMessage);
+        initMessageContent(contentParentLayout, selectedMessage);
 
     }
 

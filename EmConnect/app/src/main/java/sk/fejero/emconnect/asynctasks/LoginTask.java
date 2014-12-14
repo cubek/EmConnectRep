@@ -4,10 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.widget.Toast;
-
-
 import javax.mail.MessagingException;
-
 import sk.fejero.emconnect.EmailActivity;
 import sk.fejero.emconnect.SigninActivity;
 import sk.fejero.emconnect.mailclient.AccountSettings;

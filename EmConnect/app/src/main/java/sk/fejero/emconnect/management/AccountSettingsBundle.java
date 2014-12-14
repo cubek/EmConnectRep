@@ -1,10 +1,6 @@
 package sk.fejero.emconnect.management;
 
-import sk.fejero.emconnect.mailclient.AccountSettings;
 
-/**
- * Created by fejero on 13.12.2014.
- */
 public class AccountSettingsBundle {
 
     private String name;

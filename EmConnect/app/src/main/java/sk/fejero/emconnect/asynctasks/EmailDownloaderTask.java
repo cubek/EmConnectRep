@@ -2,17 +2,13 @@ package sk.fejero.emconnect.asynctasks;
 
 import android.os.AsyncTask;
 import android.util.Log;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.util.Arrays;
-
 import javax.mail.Message;
 import javax.mail.MessagingException;
-
 import sk.fejero.emconnect.mailclient.EmailMessage;
 import sk.fejero.emconnect.mailclient.incomming.ImapClient;
 import sk.fejero.emconnect.management.ContainerManagement;

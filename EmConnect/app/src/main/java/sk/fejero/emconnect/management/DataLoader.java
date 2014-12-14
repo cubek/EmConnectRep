@@ -8,10 +8,6 @@ import java.util.List;
 
 import sk.fejero.emconnect.mailclient.EmailMessage;
 
-
-/**
- * Created by fejero on 6.11.2014.
- */
 public class DataLoader {
 
     //private ContainerManagement cm;

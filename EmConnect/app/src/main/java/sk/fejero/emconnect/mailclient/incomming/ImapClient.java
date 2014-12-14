@@ -128,7 +128,7 @@ public class ImapClient {
         EmailMessage email;
         email = new EmailMessage();
         email.setAuthor(((InternetAddress) message.getFrom()[0]).getAddress());
-        email.setTo(Arrays.toString(message.getRecipients(Message.RecipientType.TO)));
+        email.setTo(((InternetAddress)message.getRecipients(Message.RecipientType.TO)[0]).getAddress());
         email.setReceived(message.getReceivedDate());
         email.setSent(message.getSentDate());
         email.setSubject(message.getSubject());
@@ -170,7 +170,7 @@ public class ImapClient {
     }
 
     public String getAuthor() {
-        Folder emailFolder = null;
+        Folder emailFolder;
         String author = null;
         try {
             emailFolder = store.getFolder("Sent");

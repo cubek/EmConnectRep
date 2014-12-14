@@ -8,9 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
-
 import java.util.Date;
-
 import sk.fejero.emconnect.EmailActivity;
 import sk.fejero.emconnect.R;
 import sk.fejero.emconnect.asynctasks.SendMessageTask;

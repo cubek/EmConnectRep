@@ -3,12 +3,8 @@ package sk.fejero.emconnect;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-
-import sk.fejero.emconnect.fragments.CurrentFragment;
 import sk.fejero.emconnect.fragments.InboxSectionFragment;
-import sk.fejero.emconnect.fragments.MessageViewFragment;
 import sk.fejero.emconnect.fragments.NewMessageSectionFragment;
 import sk.fejero.emconnect.fragments.SentSectionFragment;
 import sk.fejero.emconnect.fragments.SettingsSectionFragment;
@@ -16,9 +12,6 @@ import sk.fejero.emconnect.mailclient.outcomming.SmtpClient;
 import sk.fejero.emconnect.management.ContainerManagement;
 import sk.fejero.emconnect.management.DataLoader;
 
-/**
- * Created by fejero on 23.10.2014.
- */
 public class SectionPagerAdapter extends FragmentPagerAdapter {
 
     private DataLoader loader;
